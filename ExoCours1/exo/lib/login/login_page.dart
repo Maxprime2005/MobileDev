@@ -2,15 +2,22 @@ import 'package:cours_01/res/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  String _email = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Login in or sign up',
+          'Login in or and sign up',
         style: TextStyle(
           color: Theme.of(context).primaryColor,
           fontSize: 22.0,
@@ -23,8 +30,14 @@ class LoginPage extends StatelessWidget {
           widthFactor: 0.8,
           child: Column(
             children: [
-              EmailAddress(),
-              ContinueButton(),
+              EmailAddress(
+                valueChanged: (String value) {
+                  print(value);
+                  _email = value;
+                  setState(() {});
+                },
+              ),
+              ContinueButton(onPressed: _email.length > 0 ? () {} : null),
               OrDivider(),
               ContinueWithButton(
                 label: 'Continue with Apple',
@@ -50,12 +63,15 @@ class LoginPage extends StatelessWidget {
 }
 
 class EmailAddress extends StatelessWidget {
-  const EmailAddress({super.key});
+  const EmailAddress({required this.valueChanged, super.key});
+  
+  final ValueChanged<String> valueChanged;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       autofocus: false,
+      onChanged: valueChanged,
       style: TextStyle(color: AppColors.textPrimary),
       decoration: InputDecoration(
         prefixIcon: const Icon(Icons.email_outlined),
