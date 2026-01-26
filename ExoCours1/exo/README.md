@@ -1,24 +1,16 @@
-A bare-bones Dart web app.
+# cours_01
 
-Uses [`package:web`](https://pub.dev/packages/web)
-to interop with JS and the DOM.
+Template 1er cours
 
-## Running and building
+## Getting Started
 
-To run the app,
-activate and use [`package:webdev`](https://dart.dev/tools/webdev):
+This project is a starting point for a Flutter application.
 
-```
-dart pub global activate webdev
-webdev serve
-```
+A few resources to get you started if this is your first Flutter project:
 
-To build a production version ready for deployment,
-use the `webdev build` command:
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-```
-webdev build
-```
-
-To learn how to interop with web APIs and other JS libraries,
-check out https://dart.dev/interop/js-interop.
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
