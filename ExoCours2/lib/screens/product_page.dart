@@ -5,15 +5,15 @@ class ProductPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
-        Image.network(
+        Image.asset(
           'assets/photo_entete.jpg',
-          height: 300,
+          height: 1000,
           width: double.infinity,
           fit: BoxFit.cover,
-        ),
+        ), 
         
         Container(
           width: double.infinity,
@@ -29,22 +29,79 @@ class ProductPage extends StatelessWidget {
             top: 30,      
             left: 20,    
             right: 20,
+            bottom: 20,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Petits pois et carottes',
+                'Avocado Toast',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const Text(
-                'Cassegrain',
+                'Grand Restaurant de petit dej',
                 style: TextStyle(color: Colors.grey, fontSize: 16),
+              ),
+            Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              children: [
+                const InfoLigne(
+                  libelle: 'Format',
+                  valeur: '200g',
+                ),
+                
+                const InfoLigne(
+                  libelle: 'Orgine',
+                  valeur: 'France',
+                  showDivider: false, // On cache le dernier séparateur
+                ),
+                ],
+          ),
+        ),
+      ],     
+     ),
+    ),
+    ],
+    );
+  }
+}
+
+class InfoLigne extends StatelessWidget {
+  final String libelle;
+  final String valeur;
+  final bool showDivider; // Le séparateur optionnel
+
+  const InfoLigne({
+    super.key,
+    required this.libelle,
+    required this.valeur,
+    this.showDivider = true, // Par défaut, on l'affiche
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                libelle,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              Text(
+                valeur,
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
             ],
           ),
         ),
+        if (showDivider)
+          const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
       ],
     );
   }
