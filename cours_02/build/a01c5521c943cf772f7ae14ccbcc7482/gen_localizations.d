@@ -1,0 +1,1 @@
+ D:\\DevMobile\\cours_02\\lib\\l10n\\app_localizations_fr.dart D:\\DevMobile\\cours_02\\lib\\l10n\\app_localizations.dart:  D:\\DevMobile\\cours_02\\l10n.yaml D:\\DevMobile\\cours_02\\lib\\l10n\\app_fr.arb
