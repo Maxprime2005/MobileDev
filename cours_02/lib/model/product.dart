@@ -12,8 +12,6 @@ class Product {
   final ProductNovaScore? novaScore;
   final ProductGreenScore? greenScore;
   final List<String>? ingredients;
-
-  // Eg: "Sucre, <span class=\"allergen\">gluten de blé</span>"
   final String? ingredientsWithAllergens;
   final List<String>? traces;
   final List<String>? allergens;
@@ -49,6 +47,71 @@ class Product {
     this.isVegan,
     this.isVegetarian,
   });
+
+  Product.fromJSON(Map<String, dynamic> json)
+      : barcode = json['barcode']?.toString() ?? '',
+        name = json['name'],
+        altName = json['altName'],
+        picture = json['pictures'] != null ? json['pictures']['product']: null,
+        quantity = json['quantity']?.toString(),
+        brands = _parseList(json['brands']),
+        manufacturingCountries = _parseList(json['manufacturingCountries']),
+        nutriScore = _parseNutriScore(json['nutriScore']),
+        novaScore = _parseNovaScore(json['novaScore']),
+        greenScore = _parseGreenScore(json['ecoScoreGrade']),
+        nutritionFacts = json['nutritionFacts'] != null 
+          ? NutritionFacts.fromJSON(json['nutritionFacts']) 
+          : null,
+        nutriScoreLevels = json['levels'] != null 
+          ? ProductNutriScoreLevels.fromJSON(json['levels']) 
+          : null,
+        ingredients = json['ingredients'] != null ? _parseList(json['ingredients']['list']) : null,
+        traces = json['traces'] != null ? _parseList(json['traces']['list']) : null,
+        allergens = json['allergens'] != null ? _parseList(json['allergens']['list']) : null,
+        ingredientsWithAllergens =json['ingredients'] != null ? json['ingredients']['withAllergens'] : null,
+        additives = json['additives'] != null ? Map<String, String>.from(json['additives']) : null,        nutrientLevels = null,
+        ingredientsFromPalmOil = json['ingredients']?['containsPalmOil'],
+        containsPalmOil = ProductAnalysis.fromString(json['analysis']?['palmOil']),
+        isVegan = ProductAnalysis.fromString(json['analysis']?['vegan']),
+        isVegetarian = ProductAnalysis.fromString(json['analysis']?['vegetarian']);
+
+  static ProductNutriScore? _parseNutriScore(String? value) {
+    if (value == null) return null;
+    return ProductNutriScore.values.firstWhere(
+      (e) => e.name.toLowerCase() == value.toString().toLowerCase(),
+      orElse: () => ProductNutriScore.unknown,
+    );
+  }
+
+  static ProductNovaScore? _parseNovaScore(dynamic value) {
+    if (value == null) return null;
+
+    String scoreStr = value is int ? 'group$value' : value.toString().toLowerCase();
+
+    return ProductNovaScore.values.firstWhere(
+      (e) => e.name.toLowerCase() == scoreStr,
+      orElse: () => ProductNovaScore.unknown,
+    );
+  }
+
+  static ProductGreenScore? _parseGreenScore(String? value) {
+    if (value == null) return null;
+    return ProductGreenScore.values.firstWhere(
+      (e) => e.name.toLowerCase() == value.toLowerCase(),
+      orElse: () => ProductGreenScore.unknown,
+    );
+  }
+  static List<String>? _parseList(dynamic value) {
+  if (value == null) return null;
+  if (value is List) {
+    return List<String>.from(value);
+  }
+  if (value is String) {
+    // Si l'API envoie une chaîne au lieu d'une liste, on la met dans une liste
+    return [value];
+  }
+  return null;
+}
 }
 
 class NutritionFacts {
@@ -77,23 +140,19 @@ class NutritionFacts {
     this.salt,
     this.energy,
   });
-}
 
-class Nutriment {
-  final String unit;
-  final dynamic perServing;
-  final dynamic per100g;
-
-  Nutriment({required this.unit, this.perServing, this.per100g});
-}
-
-class NutrientLevels {
-  final String? salt;
-  final String? saturatedFat;
-  final String? sugars;
-  final String? fat;
-
-  NutrientLevels({this.salt, this.saturatedFat, this.sugars, this.fat});
+  NutritionFacts.fromJSON(Map<String, dynamic> json)
+      : servingSize = json['servingSize'] ?? '',
+        calories = json['calories'] != null ? Nutriment.fromJSON(json['calories']) : null,
+        fat = json['fat'] != null ? Nutriment.fromJSON(json['fat']) : null,
+        saturatedFat = json['saturatedFat'] != null ? Nutriment.fromJSON(json['saturatedFat']) : null,
+        carbohydrate = json['carbohydrate'] != null ? Nutriment.fromJSON(json['carbohydrate']) : null,
+        sugar = json['sugar'] != null ? Nutriment.fromJSON(json['sugar']) : null,
+        fiber = json['fiber'] != null ? Nutriment.fromJSON(json['fiber']) : null,
+        proteins = json['proteins'] != null ? Nutriment.fromJSON(json['proteins']) : null,
+        sodium = json['sodium'] != null ? Nutriment.fromJSON(json['sodium']) : null,
+        salt = json['salt'] != null ? Nutriment.fromJSON(json['salt']) : null,
+        energy = json['energy'] != null ? Nutriment.fromJSON(json['energy']) : null;
 }
 
 class ProductNutriScoreLevels {
@@ -106,15 +165,49 @@ class ProductNutriScoreLevels {
   final ProductNutriScoreLevel? sugars;
 
   ProductNutriScoreLevels({
-    required this.energy,
-    required this.fiber,
-    required this.fruitsVegetablesLegumes,
-    required this.proteins,
-    required this.salt,
-    required this.saturatedFat,
-    required this.sugars,
+    this.energy,
+    this.fiber,
+    this.fruitsVegetablesLegumes,
+    this.proteins,
+    this.salt,
+    this.saturatedFat,
+    this.sugars,
   });
+
+  ProductNutriScoreLevels.fromJSON(Map<String, dynamic> json)
+      : energy = json['energy'] != null ? ProductNutriScoreLevel.fromJSON(json['energy']) : null,
+        fiber = json['fiber'] != null ? ProductNutriScoreLevel.fromJSON(json['fiber']) : null,
+        fruitsVegetablesLegumes = json['fruitsVegetablesLegumes'] != null ? ProductNutriScoreLevel.fromJSON(json['fruitsVegetablesLegumes']) : null,
+        proteins = json['proteins'] != null ? ProductNutriScoreLevel.fromJSON(json['proteins']) : null,
+        salt = json['salt'] != null ? ProductNutriScoreLevel.fromJSON(json['salt']) : null,
+        saturatedFat = json['saturatedFat'] != null ? ProductNutriScoreLevel.fromJSON(json['saturatedFat']) : null,
+        sugars = json['sugars'] != null ? ProductNutriScoreLevel.fromJSON(json['sugars']) : null;
 }
+
+
+
+
+class Nutriment {
+  final String unit;
+  final dynamic perServing;
+  final dynamic per100g;
+
+  Nutriment({required this.unit, this.perServing, this.per100g});
+  Nutriment.fromJSON(Map<String, dynamic> json)
+      : unit = json['unit'] ?? '',
+        perServing = json['perServing'],
+        per100g = json['per100g'];
+}
+
+class NutrientLevels {
+  final String? salt;
+  final String? saturatedFat;
+  final String? sugars;
+  final String? fat;
+
+  NutrientLevels({this.salt, this.saturatedFat, this.sugars, this.fat});
+}
+
 
 class ProductNutriScoreLevel {
   final double points;
@@ -130,7 +223,20 @@ class ProductNutriScoreLevel {
     required this.value,
     required this.type,
   });
+  ProductNutriScoreLevel.fromJSON(Map<String, dynamic> json)
+      : points = (json['points'] ?? 0).toDouble(),
+        maxPoints = (json['maxPoints'] ?? 0).toDouble(),
+        unit = json['unit'] ?? '',
+        value = (json['value'] ?? 0).toDouble(),
+        type =_parseType(json['type']);
+    static ProductNutriScoreLevelType _parseType(String? type) {
+    return ProductNutriScoreLevelType.values.firstWhere(
+      (e) => e.name == type,
+      orElse: () => ProductNutriScoreLevelType.unknown,
+    );
+  }    
 }
+
 
 enum ProductNutriScoreLevelType { positive, negative, unknown }
 

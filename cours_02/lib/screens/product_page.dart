@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:formation_flutter/l10n/app_localizations.dart';
 import 'package:formation_flutter/model/product.dart';
@@ -282,23 +283,27 @@ class ProductViewModel extends ChangeNotifier {
 
   Product? get product => _product;
 
+  final Dio _dio = Dio();
+
   ProductViewModel() {
     loadProduct(); 
   }
 
   Future<void> loadProduct() async {
-    await Future.delayed(const Duration(seconds: 2));
+    try {
 
-    _product = Product(
-      name: 'Petits pois et carottes',
-      brands: ['Cassegrain'],
-      nutriScore: ProductNutriScore.B,
-      novaScore: ProductNovaScore.group4,
-      greenScore: ProductGreenScore.A,
-      barcode: '3083680085304',
-      picture: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=1310&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    );
-
+      final response = await _dio.get(
+        'https://api.formation-flutter.fr/v2/getProduct',
+        queryParameters: {'barcode': '5000159484695'},
+      );
+      if (response.data['response'] != null) {
+      _product = Product.fromJSON(response.data['response']);
+    }
+  } catch (e) {
+    print(e);
+  } finally {
+    // C'EST ICI : En dehors du try/catch, pour forcer le rafraîchissement
     notifyListeners(); 
   }
+}
 }
