@@ -9,9 +9,17 @@ class ProductPage extends StatelessWidget {
   const ProductPage({super.key});
 
   static const double IMAGE_HEIGHT = 300.0;
-
+  
   @override
   Widget build(BuildContext context) {
+    return ProductInh(
+      product :generateProduct(),
+
+      child: Builder(
+        builder:(context) {
+
+          final product = ProductInh.of(context).product;
+          
     return Scaffold(
       body: SizedBox.expand(
         child: Stack(
@@ -22,7 +30,7 @@ class ProductPage extends StatelessWidget {
               end: 0.0,
               height: IMAGE_HEIGHT,
               child: Image.network(
-                'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=1310&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                product.picture ?? '',
                 fit: BoxFit.cover,
                 cacheHeight:
                     (IMAGE_HEIGHT * MediaQuery.devicePixelRatioOf(context))
@@ -46,53 +54,58 @@ class ProductPage extends StatelessWidget {
                   vertical: 30.0,
                 ),
                 child: Column(
-                  crossAxisAlignment: .start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Petits pois et carottes',
-                      style: context.theme.title1,
+                      product.name?? 'Nom inconnu',
+                      style: context.theme.title1, 
                     ),
-                    Text('Cassegrain', style: context.theme.title2),
-                    Scores(),
-                    Scores(),
-                    Scores(),
-                    Scores(),
+                    Text(product.brands?.join(', ') ?? 'Marque inconnue', style: context.theme.title2,
+                    ),
+                   const Scores(),
+        
                   ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
+          ),
+        );
+      },
+    ),
+  );
+}
 }
 
 class Scores extends StatelessWidget {
   const Scores({super.key});
 
+  
   @override
   Widget build(BuildContext context) {
+    final product = ProductInh.of(context).product;
     return Column(
       children: [
         IntrinsicHeight(
           child: Row(
-            crossAxisAlignment: .start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 flex: 44,
-                child: _Nutriscore(nutriscore: ProductNutriScore.B),
+                child: _Nutriscore(nutriscore: product.nutriScore ?? ProductNutriScore.unknown,),
               ),
               VerticalDivider(),
               Expanded(
                 flex: 56,
-                child: _NovaGroup(novaScore: ProductNovaScore.group4),
+                child: _NovaGroup(novaScore: product.novaScore?? ProductNovaScore.unknown,),
               ),
             ],
           ),
         ),
         Divider(),
-        _GreenScore(greenScore: ProductGreenScore.A),
+        _GreenScore(greenScore: product.greenScore ?? ProductGreenScore.unknown,
+        ),
       ],
     );
   }
@@ -126,7 +139,7 @@ class _Nutriscore extends StatelessWidget {
       ProductNutriScore.C => 'res/drawables/nutriscore_c.png',
       ProductNutriScore.D => 'res/drawables/nutriscore_d.png',
       ProductNutriScore.E => 'res/drawables/nutriscore_e.png',
-      ProductNutriScore.unknown => 'TODO',
+      ProductNutriScore.unknown => 'res/drawables/nutriscore_e.png',
     };
   }
 }
@@ -234,5 +247,43 @@ class _GreenScore extends StatelessWidget {
       ProductGreenScore.F => 'Impact environnemental très élevé',
       ProductGreenScore.unknown => 'Score non calculé',
     };
+  }
+}
+
+class ProductInh extends InheritedWidget {
+  const ProductInh({
+    super.key,
+    required Widget child, required this.product})
+    :super(child: child);
+    final Product product;
+
+    static ProductInh of (BuildContext context) {
+      final ProductInh? result = context.dependOnInheritedWidgetOfExactType<ProductInh>();
+    assert(result != null, 'No ProductInh found in context');
+    return result!;
+  }
+
+  @override
+  bool updateShouldNotify(ProductInh old) {
+    return product != old.product;
+  }
+}
+      
+    
+
+
+
+
+class Test extends StatefulWidget {
+  const Test({super.key});
+
+  @override
+  State<Test> createState() => _TestState();
+}
+
+class _TestState extends State<Test> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }

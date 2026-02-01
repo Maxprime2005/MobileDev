@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:formation_flutter/l10n/app_localizations.dart';
 import 'package:formation_flutter/res/app_colors.dart';
+import 'package:formation_flutter/res/app_theme_extension.dart';
 //import 'package:formation_flutter/screens/home_page.dart';
 import 'package:formation_flutter/screens/product_page.dart';
 void main() {
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
+        extensions: [OffThemeExtension.defaultValues()],
         colorScheme: .fromSeed(seedColor: AppColors.nutriscoreA),
         fontFamily: 'Avenir',
         textTheme: TextTheme(headlineMedium: TextStyle()),
